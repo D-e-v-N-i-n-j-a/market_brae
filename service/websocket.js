@@ -2,7 +2,7 @@
 
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
-const { GroupMessage } = require('./models');
+const { GroupMessage } = require('../models');
 
 const wss = new WebSocket.Server({ noServer: true });
 

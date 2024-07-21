@@ -1,12 +1,13 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000; 
 const db = require('./models');
 const bodyParser = require('body-parser');
 const userAuthRoutes = require('./routes/userAuthRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const groupChatRoutes = require('./routes/groupChatRoutes');
-const wss = require('./websocket');
+const wss = require('./service/websocket');
 
 
 
@@ -18,13 +19,13 @@ app.use(bodyParser())
 
 app.use('/api/v1/auth', userAuthRoutes);
 app.use('/api/v1/subscription', subscriptionRoutes);
-app.use('/api/group-chat', groupChatRoutes);
+app.use('/api/v1/group-chat', groupChatRoutes);
 
 
 
-
+ 
 // SEQUALIZE DB
-db.sequelize.sync({ force: true })              
+db.sequelize.sync({ force: false })               
   .then(() => { 
     console.log('Database synchronized');
   }) 

@@ -1,4 +1,3 @@
-// controllers/groupChatController.js
 
 const { GroupChat, GroupMessage, User } = require('../models');
 
@@ -14,6 +13,7 @@ exports.createGroupChat = async (req, res) => {
   }
 };
 
+
 exports.getGroupMessages = async (req, res) => {
   const { groupId } = req.params;
 
@@ -26,4 +26,5 @@ exports.getGroupMessages = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}; 
+ 

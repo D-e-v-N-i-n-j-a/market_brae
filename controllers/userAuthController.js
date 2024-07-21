@@ -7,25 +7,33 @@ const { registerSchema, loginSchema } = require('../validations/userValidation')
 const { sendEmail } = require('../utils/mailer');
 const generateOTP = require('../utils/otpGenerator');
 
+let temporaryUsers = {}; // In-memory store for demonstration purposes
 
-
-exports.register = async (req, res) => {
+exports.sendOtp = async (req, res) => {
   const { error } = registerSchema.validate(req.body);
 
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
-  } 
+  }
 
   const { firstname, middlename, lastname, email, password, phone } = req.body;
+
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: 'Email is already in use.' });
     }
 
-    const password_hash = bcrypt.hashSync(password, 10);
     const otp = generateOTP();
-    const user = await User.create({ firstname, middlename, lastname, email, password_hash, phone, otp });
+    temporaryUsers[email] = {
+      firstname,
+      middlename,
+      lastname,
+      email,
+      password,
+      phone,
+      otp
+    };
 
     // Send OTP email
     const subject = 'Your OTP Code';
@@ -33,11 +41,41 @@ exports.register = async (req, res) => {
     const context = { firstname, otp };
     await sendEmail(email, subject, template, context);
 
-    res.status(201).json({ message: 'Registration successful. Please check your email for the OTP code.' });
+    res.status(200).json({ message: 'OTP sent to your email. Please verify to complete registration.' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.verifyOtpAndRegister = async (req, res) => {
+  const { email, otp } = req.body;
+
+  const tempUser = temporaryUsers[email];
+
+  if (!tempUser || tempUser.otp !== otp) {
+    return res.status(400).json({ message: 'Invalid OTP.' });
+  }
+
+  try {
+    const password_hash = bcrypt.hashSync(tempUser.password, 10);
+    const user = await User.create({
+      firstname: tempUser.firstname,
+      middlename: tempUser.middlename,
+      lastname: tempUser.lastname,
+      email: tempUser.email,
+      password_hash,
+      phone: tempUser.phone
+    });
+
+    delete temporaryUsers[email]; 
+
+    res.status(201).json({ message: 'Registration successful.', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 
 exports.login = async (req, res) => {
   const { error } = loginSchema.validate(req.body);
@@ -64,21 +102,5 @@ exports.login = async (req, res) => {
 };
 
 
-exports.verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
 
-  try {
-    const user = await User.findOne({ where: { email, otp } });
 
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid OTP.' });
-    }
-
-    user.otp = null;
-    await user.save();
-
-    res.status(200).json({ message: 'OTP verified successfully.' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
