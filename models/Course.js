@@ -16,6 +16,10 @@ const Course = sequelize.define('Course', {
   description: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  coverImageUrl: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   tableName: 'courses',

@@ -29,7 +29,8 @@ exports.createCourse = async (req, res) => {
       return res.status(400).json({ message: 'Admin not found' });
     }
 
-    const course = await Course.create({ title, description, adminId });
+    const coverImageUrl = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : null;
+    const course = await Course.create({ title, description, adminId, coverImageUrl });
     res.status(201).json(course);
   } catch (error) {
     res.status(500).json({ error: error.message });

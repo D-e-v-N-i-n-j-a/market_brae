@@ -12,6 +12,8 @@ const groupChatRoutes = require('./routes/groupChatRoutes');
 const wss = require('./service/websocket');
 const course = require('./routes/courseRoutes')
 const blogRoutes = require('./routes/blogRoutes')
+const faqRoutes = require('./routes/faqRoutes');
+
 
 
 
@@ -27,7 +29,7 @@ app.use('/api/v1/subscription', subscriptionRoutes);
 app.use('/api/v1/group-chat', groupChatRoutes);
 app.use('/api/v1/admin/course',course);
 app.use('/api/v1/blog',blogRoutes)
-
+app.use('/api/v1/faqs', faqRoutes);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
