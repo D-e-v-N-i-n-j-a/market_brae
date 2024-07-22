@@ -12,6 +12,26 @@ const Comment = sequelize.define('Comment', {
   text: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  courseId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'courses', // refers to table name
+      key: 'id'
+    },
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users', // refers to table name
+      key: 'id'
+    },
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE'
   }
 }, {
   tableName: 'comments',
@@ -20,6 +40,7 @@ const Comment = sequelize.define('Comment', {
 
 Comment.associate = (models) => {
   Comment.belongsTo(models.Course, { foreignKey: 'courseId' });
+  Comment.belongsTo(models.User, { foreignKey: 'userId' });
 };
 
 module.exports = Comment;

@@ -12,14 +12,19 @@ const CourseMaterial = sequelize.define('CourseMaterial', {
   fileUrl: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  courseId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 }, {
   tableName: 'course_materials',
   timestamps: true
 });
 
 CourseMaterial.associate = (models) => {
-  CourseMaterial.belongsTo(models.Course, { foreignKey: 'courseId' });
+  CourseMaterial.belongsTo(models.Course, { foreignKey: 'courseId', onDelete: 'SET NULL', onUpdate: 'CASCADE' });
+
 };
 
 module.exports = CourseMaterial;

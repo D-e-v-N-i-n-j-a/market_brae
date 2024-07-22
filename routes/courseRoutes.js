@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/courseController');
 const multer = require('multer');
-import { authenticateAdminToken } from '../middleware/authMiddleWare';
+const { authenticateAdminToken } =require( '../middleware/authMiddleWare');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
