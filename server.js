@@ -11,6 +11,7 @@ const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const groupChatRoutes = require('./routes/groupChatRoutes');
 const wss = require('./service/websocket');
 const course = require('./routes/courseRoutes')
+const blogRoutes = require('./routes/blogRoutes')
 
 
 
@@ -24,7 +25,8 @@ app.use(bodyParser())
 app.use('/api/v1/auth', userAuthRoutes);
 app.use('/api/v1/subscription', subscriptionRoutes);
 app.use('/api/v1/group-chat', groupChatRoutes);
-app.use('/api/v1/admin/course',course)
+app.use('/api/v1/admin/course',course);
+app.use('/api/v1/blog',blogRoutes)
 
 
 // Ensure uploads directory exists
@@ -42,13 +44,13 @@ app.use((err, req, res, next) => {
 
   
 // SEQUALIZE DB
-db.sequelize.sync({ alter: true })               
+db.sequelize.sync({ alter: false })               
   .then(() => { 
     console.log('Database synchronized');
   }) 
   .catch(err => {   
     console.error('Error synchronizing the database:', err);
-  }); 
+  });  
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

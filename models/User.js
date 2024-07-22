@@ -49,7 +49,8 @@ const User = sequelize.define('User', {
 
 User.associations = (models)=>{
   User.hasMany(models.Subscription, { foreignKey: 'userId' });
-  Subscription.belongsTo(User, { foreignKey: 'userId' });
+  User.hasMany(models.Comment, { foreignKey: 'userId', });
+
 }
 
 module.exports = User;
