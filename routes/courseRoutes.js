@@ -1,25 +1,24 @@
-
 const express = require('express');
+const {
+  createCourse,
+  getCourses,
+  getCourse,
+  updateCourse,
+  deleteCourse,
+  uploadCourseMaterials
+} = require('../controllers/courseController');
+const { userMiddleware, adminMiddleware } = require('../middlewares/authMiddleware');
+
 const router = express.Router();
-const courseController = require('../controllers/courseController');
-const multer = require('multer');
-const { authenticateAdminToken } =require( '../middleware/authMiddleWare');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
-  }
-});
-const upload = multer({ storage: storage });
+// Public routes
+router.get('/', getCourses);
+router.get('/:courseId', getCourse);
 
-router.post('/create',authenticateAdminToken, courseController.createCourse);
-router.post('/add-material', authenticateAdminToken, upload.single('file'), courseController.addCourseMaterial);
-router.get('/',authenticateAdminToken, courseController.getCourses);
-router.post('/like',authenticateAdminToken, courseController.likeCourse);
-router.post('/comment',authenticateAdminToken, courseController.addComment);
+// Admin routes
+router.post('/create', adminMiddleware, createCourse);
+router.put('/update/:courseId', adminMiddleware, updateCourse);
+router.delete('/delete/:courseId', adminMiddleware, deleteCourse);
+router.post('/upload/:courseId/materials', adminMiddleware, uploadCourseMaterials);
 
 module.exports = router;

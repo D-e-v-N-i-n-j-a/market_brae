@@ -1,12 +1,23 @@
-// routes/subscriptionRoutes.js
-
 const express = require('express');
+const {
+  initiateSubscription,
+  verifySubscription,
+  createSubscription,
+  getSubscriptions,
+  updateSubscription,
+  deleteSubscription
+} = require('../controllers/subscriptionController');
+const { userMiddleware, adminMiddleware } = require('../middlewares/authMiddleware');
+
 const router = express.Router();
-const subscriptionController = require('../controllers/subscriptionController');
-const { authenticateUserToken } = require('../middleware/authMiddleWare');
 
+router.post('/initiate', userMiddleware, initiateSubscription);
+router.get('/verify', userMiddleware, verifySubscription);
 
-router.post('/subscribe',authenticateUserToken, subscriptionController.initiateSubscription);
-router.get('/verify-subscription',authenticateUserToken, subscriptionController.verifySubscription);
+// Admin routes
+router.post('/admin/create', adminMiddleware, createSubscription);
+router.get('/admin', adminMiddleware, getSubscriptions);
+router.put('/admin/update', adminMiddleware, updateSubscription);
+router.delete('/admin/delete/:subscriptionId', adminMiddleware, deleteSubscription);
 
 module.exports = router;

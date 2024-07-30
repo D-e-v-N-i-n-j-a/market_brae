@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Subscription Confirmation</title>
+</head>
+<body>
+  <h1>Subscription Confirmation</h1>
+  <p>Dear <%= user.first_name %>,</p>
+  <p>Thank you for subscribing to our service. Your subscription plan is <%= user.plan %> and will expire on <%= user.expiry_date %>.</p>
+  <p>Best regards,</p>
+  <p>The Team</p>
+</body>
+</html>

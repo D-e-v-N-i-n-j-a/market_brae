@@ -1,45 +1,11 @@
-// models/Subscription.js
+const mongoose = require('mongoose');
 
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const User = require('./User');
-
-const Subscription = sequelize.define('Subscription', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: User,
-      key: 'id'
-    }
-  },
-  status: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-    defaultValue: 'pending'
-  },
-  reference: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  amount: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  }
-}, {
-  sequelize,
-  modelName: 'Subscription',
-  tableName: 'subscriptions',
-  timestamps: true
+const SubscriptionSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  plan: { type: String, required: true }, // e.g., 'monthly', 'yearly'
+  expiryDate: { type: Date, required: true },
+  subscribedAt: { type: Date, default: Date.now }
 });
 
-User.hasMany(Subscription, { foreignKey: 'userId' });
-Subscription.belongsTo(User, { foreignKey: 'userId' });
-
+const Subscription = mongoose.model('Subscription', SubscriptionSchema);
 module.exports = Subscription;

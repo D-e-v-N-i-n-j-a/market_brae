@@ -1,35 +1,20 @@
-// models/admin.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const Admin = sequelize.define('Admin', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-    allowNull: false
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  password_hash: {
-    type: DataTypes.STRING,
-    allowNull: false
-  }
-}, {
-  tableName: 'admins',
-  timestamps: true
+const AdminSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
 });
 
-Admin.associate = (models) => {
-  Admin.hasMany(models.Course, { foreignKey: 'adminId' });
-};
+AdminSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
+const Admin = mongoose.model('Admin', AdminSchema);
 module.exports = Admin;
